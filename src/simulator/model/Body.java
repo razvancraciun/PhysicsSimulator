@@ -7,7 +7,7 @@ public class Body {
 	private Vector velocity;
 	private Vector acceleration;
 	private Vector position;
-	private double mass;
+	protected double mass;
 	
 	public Body() {
 		this.id="default";

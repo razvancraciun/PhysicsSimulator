@@ -29,6 +29,7 @@ import simulator.misc.Vector;
 import simulator.model.Body;
 import simulator.model.FallingToCenterGravity;
 import simulator.model.GravityLaws;
+import simulator.model.MassLossingBody;
 import simulator.model.NewtonUniversalGravitation;
 import simulator.model.NoGravity;
 
@@ -209,6 +210,20 @@ public class Main {
 			bodies.add(new Body(id,new Vector(vel),new Vector(acc),new Vector(pos),10000.0));
 		}
 		
+		List<MassLossingBody> bodies2=new ArrayList<MassLossingBody>();
+		for(int i=0;i<nrBodies;i++) {
+			double[] acc=new double[2];
+			double[] vel=new double[2];
+			double[] pos=new double[2];
+			for(int j=0;j<2;j++) {
+				acc[j]=Math.random()*49+1;
+				vel[j]=0;//Math.random()*49+1;
+				pos[j]=Math.random()*49+1;
+			}
+			String id="id"+i;
+			bodies2.add(new MassLossingBody(id,new Vector(vel),new Vector(acc),new Vector(pos),10000.0,0.1,0.1));
+		}
+		
 		NoGravity ng=new NoGravity();
 		NewtonUniversalGravitation nug=new NewtonUniversalGravitation();
 		FallingToCenterGravity fcg=new FallingToCenterGravity();
@@ -218,7 +233,7 @@ public class Main {
 			System.out.println(b);
 		}
 		for(int i=0;i<10;i++) {
-			for(Body b : bodies) {
+			for(Body b : bodies2) {
 				b.move(1);
 				System.out.println(b);
 			}
