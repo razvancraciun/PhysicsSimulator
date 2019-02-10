@@ -11,9 +11,9 @@ public class Body {
 	
 	public Body() {
 		this.id="default";
-		this.velocity=new Vector(3);
-		this.acceleration=new Vector(3);
-		this.position=new Vector(3);
+		this.velocity=new Vector(2);
+		this.acceleration=new Vector(2);
+		this.position=new Vector(2);
 		this.mass=0;
 	}
 	
@@ -23,7 +23,7 @@ public class Body {
 		this.acceleration=acceleration;
 		this.position=position;
 		this.acceleration=acceleration;
-		this.toString();
+		this.mass=mass;
 	}
 	
 	public String toString() {
@@ -58,5 +58,7 @@ public class Body {
 	public void move(double t) {
 		this.position=this.position.plus(this.velocity.scale(t));
 		this.position=this.position.plus(this.acceleration.scale(1/2*t*t));
+		
+		this.velocity=this.velocity.plus(this.acceleration.scale(t));
 	}
 }

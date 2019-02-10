@@ -27,7 +27,10 @@ import org.json.JSONObject;
 import simulator.factories.Factory;
 import simulator.misc.Vector;
 import simulator.model.Body;
+import simulator.model.FallingToCenterGravity;
 import simulator.model.GravityLaws;
+import simulator.model.NewtonUniversalGravitation;
+import simulator.model.NoGravity;
 
 public class Main {
 
@@ -194,22 +197,36 @@ public class Main {
 		int nrBodies=1;
 		List<Body> bodies=new ArrayList<Body>();
 		for(int i=0;i<nrBodies;i++) {
-			double[] acc=new double[3];
-			double[] vel=new double[3];
-			double[] pos=new double[3];
-			for(int j=0;j<3;j++) {
+			double[] acc=new double[2];
+			double[] vel=new double[2];
+			double[] pos=new double[2];
+			for(int j=0;j<2;j++) {
 				acc[j]=Math.random()*49+1;
-				vel[j]=Math.random()*49+1;
+				vel[j]=0;//Math.random()*49+1;
 				pos[j]=Math.random()*49+1;
 			}
 			String id="id"+i;
-			bodies.add(new Body(id,new Vector(vel),new Vector(acc),new Vector(pos),10.0));
+			bodies.add(new Body(id,new Vector(vel),new Vector(acc),new Vector(pos),10000.0));
 		}
+		
+		NoGravity ng=new NoGravity();
+		NewtonUniversalGravitation nug=new NewtonUniversalGravitation();
+		FallingToCenterGravity fcg=new FallingToCenterGravity();
+		fcg.apply(bodies);
 		
 		for(Body b : bodies) {
 			System.out.println(b);
-			b.move(10.0);
-			System.out.println(b);
+		}
+		for(int i=0;i<10;i++) {
+			for(Body b : bodies) {
+				b.move(1);
+				System.out.println(b);
+			}
+			fcg.apply(bodies);
+		}
+		System.out.println("/n");
+		for(Body b : bodies) {
+			
 		}
 
 		
