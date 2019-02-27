@@ -2,8 +2,6 @@ package simulator.factories;
 
 import org.json.JSONObject;
 
-import simulator.misc.Vector;
-import simulator.model.Body;
 import simulator.model.GravityLaws;
 import simulator.model.NewtonUniversalGravitation;
 
@@ -11,7 +9,7 @@ public class NewtonUniversalGravitationBuilder implements Builder<GravityLaws> {
 
 	@Override
 	public GravityLaws createInstance(JSONObject info) {
-		if(info.get("type").equals("nlug")) {
+		if(info.get("type").toString().equals("[\"nlug\"]")) {
 			return new NewtonUniversalGravitation();
 		}
 		return null;

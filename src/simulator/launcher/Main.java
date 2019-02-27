@@ -1,6 +1,9 @@
 package simulator.launcher;
 
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import simulator.control.Controller;
 import simulator.factories.BasiBodyBuilder;
 import simulator.factories.Builder;
 import simulator.factories.BuilderBasedFactory;
@@ -67,7 +71,7 @@ public class Main {
 	private static void init() {
 		// initialize the bodies factory
 		// ...
-		List<Builder> builders=new ArrayList<Builder>();
+		List<Builder<?>> builders=new ArrayList<Builder<?>>();
 		builders.add(new BasiBodyBuilder());
 		builders.add(new MassLosingBodyBuilder());
 		_bodyFactory=new BuilderBasedFactory(builders);
@@ -208,7 +212,10 @@ public class Main {
 		String gl = line.getOptionValue("gl");
 		if (gl != null) {
 			for (JSONObject fe : _gravityLawsFactory.getInfo()) {
-				if (gl.equals(fe.getString("type"))) {
+				//System.out.println(fe.get("type").toString().substring(2, fe.get("type").toString().length()-2)+"!="+gl);
+				String type=fe.get("type").toString();
+				type=type.substring(2,type.length()-2);
+				if (gl.equals(type)) {
 					_gravityLawsInfo = fe;
 					break;
 				}
@@ -223,9 +230,13 @@ public class Main {
 
 	private static void startBatchMode() throws Exception {
 		// create and connect components, then start the simulator
-		
-		//create simulator
-		//PhysicsSimulator sim=new PhysicsSimulator(_dtime,gl)
+		//TODO
+		GravityLaws law=_gravityLawsFactory.createInstance(_gravityLawsInfo);
+		PhysicsSimulator sim=new PhysicsSimulator(_dtime,law);
+		Controller controller=new Controller(sim,_bodyFactory);
+		controller.loadBodies(new FileInputStream(_inFile));
+		OutputStream out=new FileOutputStream(_outFile); //???
+		controller.run(_steps, out);
 	}
 
 	private static void start(String[] args) throws Exception {
@@ -242,59 +253,5 @@ public class Main {
 			System.err.println();
 			e.printStackTrace();
 		}
-		
-		
-		/*
-		int nrBodies=2;
-		List<Body> bodies=new ArrayList<Body>();
-		for(int i=0;i<nrBodies;i++) {
-			double[] acc=new double[2];
-			double[] vel=new double[2];
-			double[] pos=new double[2];
-			for(int j=0;j<2;j++) {
-				acc[j]=Math.random()*49+1;
-				vel[j]=0;//Math.random()*49+1;
-				pos[j]=Math.random()*49+1;
-			}
-			String id="id"+i;
-			bodies.add(new Body(id,new Vector(vel),new Vector(acc),new Vector(pos),10000.0));
-		}
-		
-		List<MassLossingBody> bodies2=new ArrayList<MassLossingBody>();
-		for(int i=0;i<nrBodies;i++) {
-			double[] acc=new double[2];
-			double[] vel=new double[2];
-			double[] pos=new double[2];
-			for(int j=0;j<2;j++) {
-				acc[j]=Math.random()*49+1;
-				vel[j]=0;//Math.random()*49+1;
-				pos[j]=Math.random()*49+1;
-			}
-			String id="id"+i;
-			bodies2.add(new MassLossingBody(id,new Vector(vel),new Vector(acc),new Vector(pos),10000.0,0.1,0.1));
-		}
-		
-		NoGravity ng=new NoGravity();
-		NewtonUniversalGravitation nug=new NewtonUniversalGravitation();
-		FallingToCenterGravity fcg=new FallingToCenterGravity();
-		nug.apply(bodies);
-		
-		PhysicsSimulator sim=new PhysicsSimulator(0.1,fcg);
-		for(Body b:bodies) {
-			sim.addBody(b);
-		}
-		*/
-		
-		/*
-		Builder<MassLossingBody> b=new MassLosingBodyBuilder();
-		JSONObject js=new JSONObject().put("type","mlb");
-		JSONArray vel=new JSONArray();
-		vel.put(1).put(2).put(3);
-		JSONArray pos=new JSONArray();
-		pos.put(8).put(2).put(3);
-		js.put("data", new JSONObject().put("vel",vel).put("pos", pos).put("id", "basicBody")
-				.put("mass", 100.0).put("freq",1).put("factor", 0.1));
-		System.out.println(b.createInstance(js));
-		*/
 	} 
 }

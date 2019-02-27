@@ -16,7 +16,11 @@ public class BuilderBasedFactory<T> implements Factory<T> {
 	@Override
 	public T createInstance(JSONObject info) {
 		for(int i=0;i<builders.size();i++) {
-			builders.get(i).createInstance(info);
+			T obj=builders.get(i).createInstance(info);
+			if(obj!=null) {
+				return obj;
+			}
+				
 		}
 		throw new IllegalArgumentException();
 	}
@@ -24,7 +28,7 @@ public class BuilderBasedFactory<T> implements Factory<T> {
 	@Override
 	public List<JSONObject> getInfo() {
 		List<JSONObject> info = new ArrayList<JSONObject>();
-		for(Builder b : builders) {
+		for(Builder<?> b : builders) {
 			info.add(b.getBuilderInfo());
 		}
 		return info;

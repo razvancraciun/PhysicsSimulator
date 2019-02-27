@@ -14,7 +14,6 @@ public class BasiBodyBuilder implements Builder<Body> {
 			JSONObject data=info.getJSONObject("data");
 			Vector vel=new Vector(JSONArrayToDoubleArray(data.getJSONArray("vel")));
 			Vector pos=new Vector(JSONArrayToDoubleArray(data.getJSONArray("pos")));
-			System.out.println(vel+ " |||" + pos);
 			return new Body(data.get("id").toString(),vel,new Vector(2),pos,data.getDouble("mass"));
 		}
 		return null;

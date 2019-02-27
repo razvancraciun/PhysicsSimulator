@@ -9,7 +9,7 @@ public class FallingToCenterGravityBuilder implements Builder<GravityLaws>{
 
 	@Override
 	public GravityLaws createInstance(JSONObject info) {
-		if(info.get("type").equals("ftcg")) {
+		if(info.get("type").toString().equals("[\"ftcg\"]")) {
 			return new FallingToCenterGravity();
 		}
 		return null;

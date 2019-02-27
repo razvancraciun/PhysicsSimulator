@@ -22,18 +22,16 @@ public class Controller {
 	
 	public void loadBodies(InputStream in) {
 		JSONObject jsonInput=new JSONObject(new JSONTokener(in));
-		int i=0;
-		JSONObject obj=jsonInput.getJSONArray("bodies").getJSONObject(i);
-		while(obj!=null) {
+		int length=jsonInput.getJSONArray("bodies").length();	
+		for(int i=0;i<length;i++) {
+			JSONObject obj=jsonInput.getJSONArray("bodies").getJSONObject(i);
 			sim.addBody(factory.createInstance(obj));
-			i++;
-			obj=jsonInput.getJSONArray("bodies").getJSONObject(i);
 		}
 	}
 	
 	public void run(int n, OutputStream out) {
 		if(out==null) 
-			throw new IllegalArgumentException("Output string is null");
+			throw new IllegalArgumentException("Output stream is null");
 		
 		String result= "{ \"states\": ["+sim.toString();
 		for(int i=0;i<n;i++) {
