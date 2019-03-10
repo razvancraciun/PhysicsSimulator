@@ -27,7 +27,7 @@ public class Body {
 	}
 	
 	public String toString() {
-		return "{ \"id\": "+id+ ", \"mass\":" + mass+", \"pos\":"+position+", \"vel\":"+velocity+", \"acc\":"+acceleration+"}";
+		return "{ \"id\": \""+id+ "\", \"mass\":" + mass+", \"pos\":"+position+", \"vel\":"+velocity+", \"acc\":"+acceleration+"}";
 	}
 	
 	public String getId() {
@@ -57,7 +57,7 @@ public class Body {
 	}
 	public void move(double t) {
 		this.position=this.position.plus(this.velocity.scale(t));
-		this.position=this.position.plus(this.acceleration.scale(1/2*t*t));
+		this.position=this.position.plus(this.acceleration.scale(0.5*t*t));
 		
 		this.velocity=this.velocity.plus(this.acceleration.scale(t));
 	}

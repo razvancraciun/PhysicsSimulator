@@ -33,13 +33,14 @@ public class Controller {
 		if(out==null) 
 			throw new IllegalArgumentException("Output stream is null");
 		
-		String result= "{ \"states\": ["+sim.toString();
-		for(int i=0;i<n;i++) {
-			sim.advance();
-			result+=","+sim.toString();
-		}
-		result+="]}";
 		PrintStream p=new PrintStream(out);
-		p.println(result);
+		p.println( "{ \"states\": [");
+		
+		for(int i=0;i<n-1;i++) {
+			p.println(sim.toString()+",");
+			sim.advance();
+		}
+		p.println(sim.toString());
+		p.println("]}");
 	}
 }

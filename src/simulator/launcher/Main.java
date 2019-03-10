@@ -25,9 +25,7 @@ import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import simulator.control.Controller;
 import simulator.factories.BasiBodyBuilder;
@@ -38,13 +36,8 @@ import simulator.factories.FallingToCenterGravityBuilder;
 import simulator.factories.MassLosingBodyBuilder;
 import simulator.factories.NewtonUniversalGravitationBuilder;
 import simulator.factories.NoGravityBuilder;
-import simulator.misc.Vector;
 import simulator.model.Body;
-import simulator.model.FallingToCenterGravity;
 import simulator.model.GravityLaws;
-import simulator.model.MassLossingBody;
-import simulator.model.NewtonUniversalGravitation;
-import simulator.model.NoGravity;
 import simulator.model.PhysicsSimulator;
 
 public class Main {
@@ -68,12 +61,14 @@ public class Main {
 
 	
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void init() {
 		// initialize the bodies factory
 		// ...
 		List<Builder<?>> builders=new ArrayList<Builder<?>>();
 		builders.add(new BasiBodyBuilder());
 		builders.add(new MassLosingBodyBuilder());
+		
 		_bodyFactory=new BuilderBasedFactory(builders);
 		
 		// initialize the gravity laws factory

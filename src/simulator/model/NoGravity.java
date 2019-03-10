@@ -6,7 +6,11 @@ public class NoGravity implements GravityLaws {
 
 	@Override
 	public void apply(List<Body> bodies) {
-		// NOTHING
+	}
+	
+	@Override
+	public String toString() {
+		return "No gravity is applied";
 	}
 	
 }

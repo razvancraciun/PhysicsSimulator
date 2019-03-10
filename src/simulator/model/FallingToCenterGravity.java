@@ -14,4 +14,10 @@ public class FallingToCenterGravity implements GravityLaws{
 				b.setAcceleration(zero.minus(b.getPosition().direction().scale(g)));
 			}
 		}
+		
+		@Override
+		public String toString() {
+			return "All bodies fall towards the “center of the universe”, i.e., they have a fixed acceleration"
+					+ "g= 9.81 towards the origin";
+		}
 }

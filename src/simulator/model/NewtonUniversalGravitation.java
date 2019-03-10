@@ -31,4 +31,9 @@ public class NewtonUniversalGravitation implements GravityLaws {
 		F= b2.getPosition().minus(b1.getPosition()).direction().scale(f);
 		return F;
 	}
+	
+	@Override
+	public String toString() {
+		return "This law states that two bodies Bi and Bj apply gravitational force on each other, i.e., pull each other.";
+	}
 }
