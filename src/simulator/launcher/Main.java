@@ -228,7 +228,7 @@ public class Main {
 		//TODO
 		GravityLaws law=_gravityLawsFactory.createInstance(_gravityLawsInfo);
 		PhysicsSimulator sim=new PhysicsSimulator(_dtime,law);
-		Controller controller=new Controller(sim,_bodyFactory);
+		Controller controller=new Controller(sim,_bodyFactory,_gravityLawsFactory);
 		controller.loadBodies(new FileInputStream(_inFile));
 		OutputStream out=new FileOutputStream(_outFile); //???
 		controller.run(_steps, out);
