@@ -9,15 +9,19 @@ import org.json.JSONTokener;
 
 import simulator.factories.Factory;
 import simulator.model.Body;
+import simulator.model.GravityLaws;
 import simulator.model.PhysicsSimulator;
+import simulator.model.SimulatorObserver;
 
 public class Controller {
 	private PhysicsSimulator sim;
-	private Factory<Body> factory;
+	private Factory<Body> bodyFactory;
+	private Factory<GravityLaws> gravityLawsFactory;
 	
-	public Controller(PhysicsSimulator sim, Factory<Body> factory) {
+	public Controller(PhysicsSimulator sim, Factory<Body> bodyFactory,Factory<GravityLaws> gravityLawsFactory) {
 		this.sim=sim;
-		this.factory=factory;
+		this.bodyFactory=bodyFactory;
+		this.gravityLawsFactory=gravityLawsFactory;
 	}
 	
 	public void loadBodies(InputStream in) {
@@ -25,7 +29,7 @@ public class Controller {
 		int length=jsonInput.getJSONArray("bodies").length();	
 		for(int i=0;i<length;i++) {
 			JSONObject obj=jsonInput.getJSONArray("bodies").getJSONObject(i);
-			sim.addBody(factory.createInstance(obj));
+			sim.addBody(bodyFactory.createInstance(obj));
 		}
 	}
 	
@@ -42,5 +46,22 @@ public class Controller {
 		}
 		p.println(sim.toString());
 		p.println("]}");
+	}
+	
+	public void reset() {
+		sim.reset();
+	}
+	public void setDeltaTime(double dt) {
+		sim.setDeltaTime(dt);
+	}
+	public void addObserver(SimulatorObserver o) {
+		sim.addObserver(o);
+	}
+	public Factory<GravityLaws> getGravityLawsFactory() {
+		return gravityLawsFactory;
+	}
+	public void setGravityLaws(JSONObject info) {
+		GravityLaws gl=gravityLawsFactory.createInstance(info);
+		sim.setGravityLaws(gl);
 	}
 }
