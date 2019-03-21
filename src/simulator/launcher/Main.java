@@ -39,6 +39,7 @@ import simulator.factories.NoGravityBuilder;
 import simulator.model.Body;
 import simulator.model.GravityLaws;
 import simulator.model.PhysicsSimulator;
+import view.MainWindow;
 
 public class Main {
 
@@ -64,7 +65,6 @@ public class Main {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static void init() {
 		// initialize the bodies factory
-		// ...
 		List<Builder<?>> builders=new ArrayList<Builder<?>>();
 		builders.add(new BasiBodyBuilder());
 		builders.add(new MassLosingBodyBuilder());
@@ -72,7 +72,6 @@ public class Main {
 		_bodyFactory=new BuilderBasedFactory(builders);
 		
 		// initialize the gravity laws factory
-		// ...
 		List<Builder> gls = new ArrayList<Builder>();
 		gls.add(new NoGravityBuilder());
 		gls.add(new FallingToCenterGravityBuilder());
@@ -83,11 +82,9 @@ public class Main {
 	private static void parseArgs(String[] args) {
 
 		// define the valid command line options
-		//
 		Options cmdLineOptions = buildOptions();
 
 		// parse the command line as provided in args
-		//
 		CommandLineParser parser = new DefaultParser();
 		try {
 			CommandLine line = parser.parse(cmdLineOptions, args);
@@ -174,10 +171,6 @@ public class Main {
 	
 	private static void parseOutFileOption(CommandLine line) throws ParseException {
 		_outFile = line.getOptionValue("o");
-		if(_outFile==null) {
-			_outFile=System.out.toString();
-		}
-		
 	}
 
 	private static void parseDeltaTimeOption(CommandLine line) throws ParseException {
@@ -207,7 +200,6 @@ public class Main {
 		String gl = line.getOptionValue("gl");
 		if (gl != null) {
 			for (JSONObject fe : _gravityLawsFactory.getInfo()) {
-				//System.out.println(fe.get("type").toString().substring(2, fe.get("type").toString().length()-2)+"!="+gl);
 				String type=fe.get("type").toString();
 				type=type.substring(2,type.length()-2);
 				if (gl.equals(type)) {
@@ -224,14 +216,17 @@ public class Main {
 	}
 
 	private static void startBatchMode() throws Exception {
-		// create and connect components, then start the simulator
-		//TODO
 		GravityLaws law=_gravityLawsFactory.createInstance(_gravityLawsInfo);
 		PhysicsSimulator sim=new PhysicsSimulator(_dtime,law);
 		Controller controller=new Controller(sim,_bodyFactory,_gravityLawsFactory);
 		controller.loadBodies(new FileInputStream(_inFile));
-		OutputStream out=new FileOutputStream(_outFile); //???
+		OutputStream out= _outFile==null ? System.out : new FileOutputStream(_outFile);
 		controller.run(_steps, out);
+		
+		//DEBUG
+		MainWindow window = new MainWindow(controller);
+		window.setSize(800,500);
+		window.setVisible(true);
 	}
 
 	private static void start(String[] args) throws Exception {
@@ -248,5 +243,7 @@ public class Main {
 			System.err.println();
 			e.printStackTrace();
 		}
+		
+		
 	} 
 }

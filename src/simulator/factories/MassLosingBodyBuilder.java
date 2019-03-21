@@ -14,7 +14,7 @@ public class MassLosingBodyBuilder implements Builder<MassLossingBody>{
 			JSONObject data=info.getJSONObject("data");
 			Vector vel=new Vector(JSONArrayToDoubleArray(data.getJSONArray("vel")));
 			Vector pos=new Vector(JSONArrayToDoubleArray(data.getJSONArray("pos")));
-			return new MassLossingBody(data.get("id").toString(),vel,new Vector(2),pos,data.getDouble("mass"),
+			return new MassLossingBody(data.get("id").toString(),vel,new Vector(pos.dim()),pos,data.getDouble("mass"),
 					data.getDouble("factor"),data.getDouble("freq"));
 		}
 		return null;

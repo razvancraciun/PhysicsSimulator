@@ -8,19 +8,9 @@ import simulator.model.Body;
 
 public class BasiBodyBuilder implements Builder<Body> {
 
-	@Override
-	public Body createInstance(JSONObject info) {
-		if(info.get("type").equals("basic")) {
-			JSONObject data=info.getJSONObject("data");
-			Vector vel=new Vector(JSONArrayToDoubleArray(data.getJSONArray("vel")));
-			Vector pos=new Vector(JSONArrayToDoubleArray(data.getJSONArray("pos")));
-			return new Body(data.get("id").toString(),vel,new Vector(2),pos,data.getDouble("mass"));
-		}
-		return null;
-	}
-
-	@Override
-	public JSONObject getBuilderInfo() {
+	JSONObject _builderInfo;
+	public BasiBodyBuilder () {
+		//building info
 		JSONObject result= new JSONObject();
 		double[] arr=new double[2];
 		arr[0]=arr[1]=0;
@@ -30,7 +20,24 @@ public class BasiBodyBuilder implements Builder<Body> {
 				.append("pos", arr)
 				.append("vel",new JSONArray(arr))
 				.append("mass",0));
-		return result;
+		_builderInfo=result;
+	}
+	
+	
+	@Override
+	public Body createInstance(JSONObject info) {
+		if(info.get("type").equals("basic")) {
+			JSONObject data=info.getJSONObject("data");
+			Vector vel=new Vector(JSONArrayToDoubleArray(data.getJSONArray("vel")));
+			Vector pos=new Vector(JSONArrayToDoubleArray(data.getJSONArray("pos")));
+			return new Body(data.get("id").toString(),vel,new Vector(pos.dim()),pos,data.getDouble("mass"));
+		}
+		return null;
+	}
+
+	@Override
+	public JSONObject getBuilderInfo() {
+		return _builderInfo;
 	}
 	
 	public double[] JSONArrayToDoubleArray(JSONArray js) {
