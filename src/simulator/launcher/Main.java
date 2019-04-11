@@ -7,6 +7,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
 /*
  * Examples of command-line parameters:
  * 
@@ -55,6 +58,7 @@ public class Main {
 	private static JSONObject _gravityLawsInfo = null;
 	private static String _outFile =null;
 	private static Integer _steps= null;
+	private static String _mode=null;
 
 	// factories
 	private static Factory<Body> _bodyFactory;
@@ -94,6 +98,7 @@ public class Main {
 			parseGravityLawsOption(line);
 			parseOutFileOption(line);
 			parseStepsOption(line);
+			parseModeOption(line);
 			
 
 			// if there are some remaining arguments, then something wrong is
@@ -112,6 +117,19 @@ public class Main {
 			System.exit(1);
 		}
 
+	}
+
+	private static void parseModeOption(CommandLine line) {
+		if(!line.hasOption("m")) {
+			_mode="gui";
+			return;
+		}
+		_mode = line.getOptionValue("m");
+		if(!_mode.equals("gui")&&!_mode.equals("batch")) {
+			throw new IllegalArgumentException("Mode must be either gui or batch");
+		}
+		
+		
 	}
 
 	private static Options buildOptions() {
@@ -133,6 +151,9 @@ public class Main {
 		//steps
 		cmdLineOptions.addOption(Option.builder("s").longOpt("steps").hasArg().desc("Number of steps to run").build());
 		
+		//mode
+		cmdLineOptions.addOption(Option.builder("m").longOpt("mode").hasArg().desc("Execution Mode. Possible values: ’batch’\n" + 
+				"(Batch mode), ’gui’ (Graphical User Interface").build());
 		
 		String gravityLawsValues = "N/A";
 		String defaultGravityLawsValue = "N/A";
@@ -222,16 +243,32 @@ public class Main {
 		controller.loadBodies(new FileInputStream(_inFile));
 		OutputStream out= _outFile==null ? System.out : new FileOutputStream(_outFile);
 		controller.run(_steps, out);
-		
-		//DEBUG
-		MainWindow window = new MainWindow(controller);
-		window.setSize(800,500);
-		window.setVisible(true);
 	}
 
 	private static void start(String[] args) throws Exception {
 		parseArgs(args);
-		startBatchMode();
+		if(_mode.equals("batch")) {
+			startBatchMode();
+		}
+		else startGUIMode();
+		
+	}
+
+	private static void startGUIMode() throws Exception {
+		GravityLaws law=_gravityLawsFactory.createInstance(_gravityLawsInfo);
+		PhysicsSimulator sim=new PhysicsSimulator(_dtime,law);
+		Controller controller=new Controller(sim,_bodyFactory,_gravityLawsFactory);
+		controller.loadBodies(new FileInputStream(_inFile));
+		SwingUtilities.invokeAndWait(new Runnable() {
+			@Override
+			public void run() {
+			MainWindow mw=	new MainWindow(controller);
+			mw.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+			mw.setUndecorated(true);
+			mw.setVisible(true);
+			}
+			});
+		
 	}
 
 	public static void main(String[] args) {

@@ -37,5 +37,10 @@ public class MainWindow extends JFrame {
 	ControlPanel cp = new ControlPanel(_ctrl);
 	mainPanel.add(cp,BorderLayout.NORTH);
 	mainPanel.add(container,BorderLayout.CENTER);
+	
+	
+	StatusBar sb= new StatusBar(_ctrl);
+	mainPanel.add(sb,BorderLayout.SOUTH);
+	
 	}
 }

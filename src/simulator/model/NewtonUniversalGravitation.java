@@ -34,6 +34,6 @@ public class NewtonUniversalGravitation implements GravityLaws {
 	
 	@Override
 	public String toString() {
-		return "This law states that two bodies Bi and Bj apply gravitational force on each other, i.e., pull each other.";
+		return "Newton universal gravitation";
 	}
 }

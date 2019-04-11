@@ -12,6 +12,7 @@ public class PhysicsSimulator {
 	private List<SimulatorObserver> observers;
 	
 	
+	
 	public PhysicsSimulator(double realTimePerStep, GravityLaws gravityLaw) {
 		if(gravityLaw==null) {
 			throw new IllegalArgumentException("Gravity law is null");
@@ -76,7 +77,7 @@ public class PhysicsSimulator {
 		}
 		time+=realTimePerStep;
 		for(SimulatorObserver o : observers) {
-			o.onAdvance(bodies, realTimePerStep);
+			o.onAdvance(bodies, time);
 		}
 	}
 	

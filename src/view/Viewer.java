@@ -1,6 +1,7 @@
 package view;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -11,7 +12,10 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+import javax.swing.border.TitledBorder;
 
 import simulator.control.Controller;
 import simulator.misc.Vector;
@@ -20,7 +24,6 @@ import simulator.model.SimulatorObserver;
 
 @SuppressWarnings("serial")
 public class Viewer extends JComponent implements SimulatorObserver {
-	// ...
 	private int _centerX;
 	private int _centerY;
 	private double _scale;
@@ -34,7 +37,8 @@ public class Viewer extends JComponent implements SimulatorObserver {
 	}
 	
 	private void initGUI() {
-		// TODO add border with title
+		setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createLineBorder(Color.black, 2),"Viewer", TitledBorder.LEFT, TitledBorder.TOP));
 		_bodies = new ArrayList<>();
 		_scale = 1.0;
 		_showHelp = true;
@@ -74,30 +78,18 @@ public class Viewer extends JComponent implements SimulatorObserver {
 		
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
-				// TODO Auto-generated method stub
-				
 			}
 		
 			@Override
-			public void mouseExited(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mouseExited(MouseEvent e) {}
 		
 			@Override
-			public void mousePressed(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mousePressed(MouseEvent e) {}
 	
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void mouseReleased(MouseEvent e) {}
 		});
-		
-		
+		repaint();
 	}
 	
 	
@@ -126,9 +118,16 @@ public class Viewer extends JComponent implements SimulatorObserver {
 			gr.setColor(Color.blue);
 			gr.fillOval(_centerX+drawX,_centerY+drawY,5,5);
 			gr.setColor(Color.black);
-			gr.drawString(b.getId(), drawX, drawY);
+			gr.drawString(b.getId(), _centerX+drawX, _centerY+drawY+20);
 		}
-		// TODO draw help if _showHelp is true
+		
+		if(_showHelp) {
+			gr.setColor(Color.red);
+			gr.drawString("h: toogle help, +: zoom in, -:zoom out, =: fit",10,30);
+			gr.setColor(Color.red);
+			gr.drawString("Scaling ratio: "+_scale, 10,40);
+		}
+		
 	}
 	
 	private void autoScale() {
@@ -148,13 +147,24 @@ public class Viewer extends JComponent implements SimulatorObserver {
 	// ...
 	@Override
 	public void onRegister(List<Body> bodies, double time, double dt, String gLawsDesc) {
-		_bodies=bodies;
-		repaint();
+		
+		SwingUtilities.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				_bodies=bodies;
+				autoScale();
+				repaint();
+			}
+			
+		});
+		
 		
 	}
 	@Override
 	public void onReset(List<Body> bodies, double time, double dt, String gLawsDesc) {
+		
 		_bodies=bodies;
+		autoScale();
 		repaint();
 		
 	}
@@ -172,14 +182,8 @@ public class Viewer extends JComponent implements SimulatorObserver {
 		
 	}
 	@Override
-	public void onDeltaTimeChanged(double dt) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onDeltaTimeChanged(double dt) {}
 	@Override
-	public void onGravityLawChanged(String gLawsDesc) {
-		// TODO Auto-generated method stub
-		
-	}
+	public void onGravityLawChanged(String gLawsDesc) {}
 
 }

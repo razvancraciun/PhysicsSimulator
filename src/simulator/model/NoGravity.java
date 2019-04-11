@@ -10,7 +10,7 @@ public class NoGravity implements GravityLaws {
 	
 	@Override
 	public String toString() {
-		return "No gravity is applied";
+		return "No gravity";
 	}
 	
 }

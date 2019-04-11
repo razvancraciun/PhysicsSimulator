@@ -1,9 +1,11 @@
 package view;
 
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -14,6 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
 import org.json.JSONObject;
@@ -23,7 +26,7 @@ import simulator.model.Body;
 import simulator.model.SimulatorObserver;
 
 @SuppressWarnings("serial")
-public class ControlPanel extends JPanel implements SimulatorObserver {
+public class ControlPanel extends JToolBar implements SimulatorObserver {
 	
 	private Controller _ctrl;
 	private boolean _stopped;
@@ -59,6 +62,7 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 		
 		JLabel dtLabel= new JLabel("Delta-Time:");
 		_deltaTime= new JTextField("10000");
+		_deltaTime.setPreferredSize(new Dimension(10,10));
 		
 		_exit=new JButton(new ImageIcon("resources/icons/exit.png"));
 		addListeners();
@@ -97,14 +101,23 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				//TODO: make a string array from their description and the iterate and find which object matches
-				Object[] possibilities = _ctrl.getGravityLawsFactory().getInfo().toArray();
-				JSONObject chosen = (JSONObject) JOptionPane.showInputDialog(ControlPanel.this,"Select gravity laws to be used",
+				Object[] possibilities =  _ctrl.getGravityLawsFactory().getInfo().toArray();
+				List<String> strings= new ArrayList<String>();
+				for(Object o : possibilities) {
+					strings.add(o.toString().substring(o.toString().indexOf("desc\":[\"")+"desc\":[\"".length(),o.toString().length()-3));
+				}
+				String chosen =(String) JOptionPane.showInputDialog(ControlPanel.this,"Select gravity laws to be used",
 						"Gravity Laws Selector",
-						JOptionPane.PLAIN_MESSAGE,null,possibilities,possibilities[0]);				
+						JOptionPane.PLAIN_MESSAGE,null,strings.toArray(),strings.get(0));				
 				if(chosen!=null) {
-					_ctrl.setGravityLaws(chosen);
+					for(Object o : possibilities) {
+						if(o.toString().indexOf(chosen)!=-1) {
+							_ctrl.setGravityLaws((JSONObject)o);
+						}
+					}
 				}
 			}
+			
 			
 		});
 		_start.addActionListener(new ActionListener() {
@@ -117,11 +130,17 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 				_deltaTime.setEnabled(false);
 				_steps.setEnabled(false);
 				_stopped=false;
-				//TODO: open a dialog if parsedouble doesnt't work
-				_ctrl.setDeltaTime(Double.parseDouble(_deltaTime.getText()));
+				
+				try {
+					_ctrl.setDeltaTime(Double.parseDouble(_deltaTime.getText()));
+				}
+				catch(Exception e1) {
+					JOptionPane.showMessageDialog(ControlPanel.this,"Delta time is not a valid double", "Not Valid", 
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				run_sim((int)_steps.getValue());
 			}
-			
 		});
 		_stop.addActionListener(new ActionListener() {
 
@@ -186,24 +205,16 @@ public class ControlPanel extends JPanel implements SimulatorObserver {
 		
 	}
 	@Override
-	public void onBodyAdded(List<Body> bodies, Body b) {
-		// TODO Auto-generated method stub
-		
+	public void onBodyAdded(List<Body> bodies, Body b) {	
 	}
 	@Override
-	public void onAdvance(List<Body> bodies, double time) {
-		// TODO Auto-generated method stub
-		
+	public void onAdvance(List<Body> bodies, double time) {		
 	}
 	@Override
 	public void onDeltaTimeChanged(double dt) {
 		_deltaTime.setText(""+dt);
-		
 	}
 	@Override
-	public void onGravityLawChanged(String gLawsDesc) {
-		// TODO Auto-generated method stub
-		//System.out.println("Gravity laws changed"+gLawsDesc);
-		
+	public void onGravityLawChanged(String gLawsDesc) {		
 	}
 }
